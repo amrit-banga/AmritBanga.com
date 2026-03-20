@@ -33,13 +33,16 @@ export default function SidescrollerGamePage() {
 
       <section className="space-y-4 text-muted-foreground leading-relaxed mb-10">
         <p>
-          A 2D platformer developed in Unity as part of a 4-person team. The game features
+          A 2D platformer developed in Unity as part of a small team. The game features
           a vertical-scrolling level with a focus on tight gameplay feel and responsive controls.
         </p>
         <p>
-          I engineered some of the core player systems, including collision handling, dynamic
+          I engineered some of core player systems, including collision handling, dynamic
           camera controls, state management, and a progress tracking UI that persists across
           checkpoints. We shipped 5+ distinct gameplay mechanics over the course of the project.
+        </p>
+        <p>
+          Developers include: Amrit Banga, Alex Lopez, Damien Flutre, Dillon Sherling, &amp; Nick Lopez
         </p>
       </section>
 
