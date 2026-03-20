@@ -15,7 +15,7 @@ const skillCategories = [
   },
   {
     category: "Tools & Frameworks",
-    skills: ["Git", "Microsoft SQL Server", "Unity", "Visual Studio", "Xcode", "Firebase", "VS Code", "Avalonia UI"],
+    skills: ["Git", "Microsoft SQL Server", "Unity", "Visual Studio", "Xcode", "Firebase", "VS Code", "Avalonia UI", "Claude Code"],
   },
 ];
 
@@ -92,16 +92,16 @@ export default function AboutPage() {
         <h2 id="bio-heading" className="text-xl font-semibold mb-4">Bio</h2>
         <div className="space-y-4 text-muted-foreground leading-relaxed">
           <p>
-            I&apos;m Amrit — a Computer Science student at Washington State University,
-            graduating in 2026, with a minor in Mathematics. I build software, lead small
-            engineering teams, and care a lot about writing code that holds up. My background
-            spans full-stack development, database design, and game development.
+            Hi I&apos;m Amrit, a Computer Science student at Washington State University,
+            graduating in 2026, with a Minor in Mathematics. I build software and lead small
+            engineering teams. My background spans full-stack development, database design,
+            and game development.
           </p>
           <p>
-            I&apos;m also an ex-Division I athlete — I competed in Cross Country and Track at
-            WSU, earned Pac-12 Scholar Athlete honors, and landed on the President&apos;s
+            I&apos;m also a retired Division I athlete, I competed in Cross Country and Track
+            at WSU, earned Pac-12 Scholar Athlete honors, and landed on the President&apos;s
             Honor Roll six times. Outside of school and work I&apos;m a runner, mountain
-            climber, and fisherman. The Pacific Northwest is a pretty good place for all three.
+            climber, and fisherman. I also dabble in photography on the side.
           </p>
         </div>
       </section>

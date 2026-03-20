@@ -2,7 +2,21 @@
   "permissions": {
     "allow": [
       "Bash(npm run:*)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Skill(claude-api)",
+      "Bash(npm install:*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/fetch-news)",
+      "Bash(python3 -m json.tool)",
+      "Bash(node -e \"require\\(''''dotenv''''\\).config\\({path:''''.env.local''''}\\); const Anthropic = require\\(''''@anthropic-ai/sdk''''\\); const key = process.env.ANTHROPIC_API_KEY; console.log\\(''''Key present:'''', !!key, ''''Length:'''', key?.length, ''''Prefix:'''', key?.slice\\(0,10\\)\\);\")",
+      "Bash(printenv ANTHROPIC_API_KEY)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(curl -s http://localhost:3000/api/news)",
+      "Bash(curl -sI http://localhost:3000/games/ascension/index.html)",
+      "Bash(curl -sI \"http://localhost:3000/games/ascension/Build/Ascension%20Web.wasm.br\")",
+      "Bash(curl -sI \"http://localhost:3000/games/ascension/Build/Ascension%20Web.framework.js.br\")",
+      "Bash(open:*)",
+      "Bash(curl -sI \"http://localhost:3000/games/ascension/Build/Ascension%20Web.wasm.gz\")",
+      "Bash(curl -sI \"http://localhost:3000/games/ascension/Build/Ascension%20Web.framework.js.gz\")"
     ]
   }
 }

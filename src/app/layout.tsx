@@ -8,6 +8,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SessionProvider } from "@/components/session-provider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
@@ -95,6 +96,7 @@ export default function RootLayout({
          * - enableSystem → allows system preference detection
          * - disableTransitionOnChange → prevents flash during theme switch
          */}
+        <SessionProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -111,6 +113,7 @@ export default function RootLayout({
           {/* Sonner toast notifications — rendered at root so all pages can use it */}
           <Toaster richColors position="bottom-right" />
         </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
