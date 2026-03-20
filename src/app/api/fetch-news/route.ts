@@ -12,25 +12,46 @@ const anthropic = process.env.ANTHROPIC_API_KEY
   ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   : null;
 
-const FEEDS: Record<string, string[]> = {
-  world: [
-    "https://feeds.reuters.com/reuters/worldNews",
-    "http://feeds.bbci.co.uk/news/world/rss.xml",
-    "https://www.theguardian.com/world/rss",
-    "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
-    "https://www.foxnews.com/world",
-  ],
+const ALL_FEEDS: Record<string, string[]> = {
   us: [
     "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
     "https://feeds.washingtonpost.com/rss/national",
     "http://rss.cnn.com/rss/cnn_us.rss",
-    "https://www.foxnews.com/us",
+  ],
+  world: [
+    "https://feeds.reuters.com/reuters/worldNews",
+    "http://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://www.theguardian.com/world/rss",
+  ],
+  technology: [
+    "https://feeds.feedburner.com/TechCrunch",
+    "https://www.theverge.com/rss/index.xml",
+    "https://feeds.arstechnica.com/arstechnica/index",
   ],
   gaming: [
     "http://feeds.feedburner.com/ign/games-all",
-    "https://www.gamesindustry.biz/feed/news",
     "https://www.eurogamer.net/feed/news",
     "https://kotaku.com/rss",
+  ],
+  science: [
+    "https://www.sciencedaily.com/rss/top.xml",
+    "https://www.newscientist.com/feed/home/",
+    "https://science.nasa.gov/feed/",
+  ],
+  sports: [
+    "https://www.espn.com/espn/rss/news",
+    "http://feeds.bbci.co.uk/sport/rss.xml",
+    "https://theathletic.com/feed/",
+  ],
+  business: [
+    "https://feeds.reuters.com/reuters/businessNews",
+    "https://feeds.bloomberg.com/markets/news.rss",
+    "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+  ],
+  entertainment: [
+    "https://variety.com/feed/",
+    "https://www.rollingstone.com/feed/",
+    "https://deadline.com/feed/",
   ],
 };
 
@@ -74,7 +95,16 @@ Tags: 2-4 topics from: politics, economy, technology, sports, science, health, c
   };
 }
 
-export async function POST() {
+export async function POST(req: Request) {
+  const body = await req.json().catch(() => ({})) as { categories?: string[] };
+  const requestedCategories = body.categories?.length
+    ? body.categories.filter((c) => c in ALL_FEEDS)
+    : Object.keys(ALL_FEEDS);
+
+  const feeds = Object.fromEntries(
+    requestedCategories.map((c) => [c, ALL_FEEDS[c]!])
+  );
+
   const db = await initDb();
   const errors: string[] = [];
   let totalFetched = 0;
@@ -84,7 +114,7 @@ export async function POST() {
   const candidates: { item: Parser.Item; category: string; source: string }[] = [];
 
   await Promise.allSettled(
-    Object.entries(FEEDS).flatMap(([category, urls]) =>
+    Object.entries(feeds).flatMap(([category, urls]) =>
       urls.map(async (url) => {
         try {
           const feed = await parser.parseURL(url);

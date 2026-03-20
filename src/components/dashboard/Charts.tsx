@@ -16,9 +16,14 @@ import {
 } from "recharts";
 
 const CATEGORY_COLORS: Record<string, string> = {
-  world: "#6366f1",
-  us: "#22c55e",
-  gaming: "#a855f7",
+  "US News":       "#22c55e",
+  "World News":    "#6366f1",
+  "Technology":    "#3b82f6",
+  "Gaming":        "#a855f7",
+  "Science":       "#06b6d4",
+  "Sports":        "#f59e0b",
+  "Business":      "#10b981",
+  "Entertainment": "#f43f5e",
 };
 
 export interface CategoryCount {

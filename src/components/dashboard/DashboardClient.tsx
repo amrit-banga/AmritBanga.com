@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { RefreshCw, LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { RefreshCw, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NewsCard } from "./NewsCard";
+import { TopicPicker } from "./TopicPicker";
 import { CategoryPieChart, TopTagsBarChart, ActivityLineChart } from "./Charts";
-import type { NewsItem } from "@/lib/db";
+import { TOPIC_OPTIONS, type TopicValue, type NewsItem } from "@/lib/db";
 import type { CategoryCount, TagCount, DateCount } from "./Charts";
+
+const LS_TOPICS = "dashboard_topics";
+const LS_LAST_REFRESH = "dashboard_last_refresh";
+const COOLDOWN_MS = 2 * 60 * 60 * 1000; // 2 hours
 
 interface RefreshStatus {
   fetched: number;
@@ -18,13 +22,11 @@ interface RefreshStatus {
 }
 
 function computeStats(items: NewsItem[]) {
-  // By category
-  const byCategory: CategoryCount[] = ["world", "us", "gaming"].map((name) => ({
-    name,
-    count: items.filter((i) => i.category === name).length,
-  }));
+  const byCategory: CategoryCount[] = TOPIC_OPTIONS.map(({ value, label }) => ({
+    name: label,
+    count: items.filter((i) => i.category === value).length,
+  })).filter((c) => c.count > 0);
 
-  // Top tags
   const tagMap: Record<string, number> = {};
   items.forEach((item) => {
     item.tags.forEach((tag) => {
@@ -36,7 +38,6 @@ function computeStats(items: NewsItem[]) {
     .slice(0, 10)
     .map(([tag, count]) => ({ tag, count }));
 
-  // Activity by date (last 14 days)
   const dateMap: Record<string, number> = {};
   items.forEach((item) => {
     const raw = item.fetched_at ?? "";
@@ -51,14 +52,25 @@ function computeStats(items: NewsItem[]) {
   return { byCategory, topTags, byDate };
 }
 
-const CATEGORY_OPTIONS = [
-  { value: "all", label: "All Categories" },
-  { value: "world", label: "World" },
-  { value: "us", label: "US" },
-  { value: "gaming", label: "Gaming" },
-];
+function getCooldownRemaining(): number {
+  const raw = localStorage.getItem(LS_LAST_REFRESH);
+  if (!raw) return 0;
+  const elapsed = Date.now() - new Date(raw).getTime();
+  return Math.max(0, COOLDOWN_MS - elapsed);
+}
+
+function formatCooldown(ms: number): string {
+  const totalMinutes = Math.ceil(ms / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
 
 export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) {
+  const [mounted, setMounted] = useState(false);
+  const [topics, setTopics] = useState<TopicValue[] | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
   const [allItems, setAllItems] = useState<NewsItem[]>(initialItems);
   const [category, setCategory] = useState("all");
   const [minScore, setMinScore] = useState(1);
@@ -66,29 +78,85 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
   const [refreshing, setRefreshing] = useState(false);
   const [status, setStatus] = useState<RefreshStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
 
-  const stats = useMemo(() => computeStats(allItems), [allItems]);
+  useEffect(() => {
+    const saved = localStorage.getItem(LS_TOPICS);
+    if (saved) {
+      setTopics(JSON.parse(saved) as TopicValue[]);
+    } else {
+      setTopics([]);
+    }
+    setCooldownRemaining(getCooldownRemaining());
+    setMounted(true);
+  }, []);
+
+  // Tick down cooldown every minute
+  useEffect(() => {
+    if (cooldownRemaining <= 0) return;
+    const id = setInterval(() => {
+      const remaining = getCooldownRemaining();
+      setCooldownRemaining(remaining);
+    }, 60000);
+    return () => clearInterval(id);
+  }, [cooldownRemaining]);
+
+  function saveTopics(selected: TopicValue[]) {
+    localStorage.setItem(LS_TOPICS, JSON.stringify(selected));
+    setTopics(selected);
+    setShowPicker(false);
+    setCategory("all");
+  }
+
+  const activeTopics = topics ?? [];
+
+  const filteredByTopic = useMemo(
+    () => activeTopics.length > 0
+      ? allItems.filter((i) => activeTopics.includes(i.category as TopicValue))
+      : [],
+    [allItems, activeTopics]
+  );
+
+  const stats = useMemo(() => computeStats(filteredByTopic), [filteredByTopic]);
+
+  const categoryOptions = useMemo(() => [
+    { value: "all", label: "All" },
+    ...TOPIC_OPTIONS.filter(({ value }) => activeTopics.includes(value)),
+  ], [activeTopics]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return allItems.filter((item) => {
+    return filteredByTopic.filter((item) => {
       if (category !== "all" && item.category !== category) return false;
       if (item.quality_score !== null && item.quality_score < minScore) return false;
       if (q && !item.title.toLowerCase().includes(q) && !item.summary?.toLowerCase().includes(q))
         return false;
       return true;
     });
-  }, [allItems, category, minScore, search]);
+  }, [filteredByTopic, category, minScore, search]);
 
   const handleRefresh = useCallback(async () => {
+    const remaining = getCooldownRemaining();
+    if (remaining > 0) {
+      setError(`Refresh available in ${formatCooldown(remaining)}.`);
+      return;
+    }
+
     setRefreshing(true);
     setStatus(null);
     setError(null);
     try {
-      const fetchRes = await fetch("/api/fetch-news", { method: "POST" });
-      if (!fetchRes.ok) throw new Error(`HTTP ${fetchRes.status}`);
-      const fetchData = (await fetchRes.json()) as RefreshStatus;
+      const fetchRes = await fetch("/api/fetch-news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categories: activeTopics }),
+      });
+      const fetchData = (await fetchRes.json()) as RefreshStatus & { error?: string };
+      if (!fetchRes.ok) throw new Error(fetchData.error ?? `HTTP ${fetchRes.status}`);
       setStatus(fetchData);
+
+      localStorage.setItem(LS_LAST_REFRESH, new Date().toISOString());
+      setCooldownRemaining(COOLDOWN_MS);
 
       const newsRes = await fetch("/api/news");
       if (!newsRes.ok) throw new Error(`HTTP ${newsRes.status}`);
@@ -96,9 +164,7 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
       setAllItems(
         newsData.items.map((i) => ({
           ...i,
-          tags: Array.isArray(i.tags)
-            ? i.tags
-            : (JSON.parse(i.tags ?? "[]") as string[]),
+          tags: Array.isArray(i.tags) ? i.tags : (JSON.parse(i.tags ?? "[]") as string[]),
         }))
       );
     } catch (e) {
@@ -106,7 +172,15 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [activeTopics]);
+
+  // Not yet mounted — avoid hydration mismatch
+  if (!mounted) return null;
+
+  // Show topic picker on first visit or when user requests it
+  if (showPicker || topics?.length === 0) {
+    return <TopicPicker onSave={saveTopics} />;
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -115,33 +189,37 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
         <div>
           <h1 className="text-3xl font-bold tracking-tight">News Intelligence</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {allItems.length} articles indexed
+            {filteredByTopic.length} articles · {activeTopics.length} topic{activeTopics.length === 1 ? "" : "s"}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
             onClick={handleRefresh}
-            disabled={refreshing}
+            disabled={refreshing || cooldownRemaining > 0}
             variant="outline"
             size="sm"
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
-            {refreshing ? "Fetching…" : "Refresh Feeds"}
+            {refreshing
+              ? "Fetching…"
+              : cooldownRemaining > 0
+              ? `Available in ${formatCooldown(cooldownRemaining)}`
+              : "Refresh Feeds"}
           </Button>
           <Button
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={() => setShowPicker(true)}
             variant="ghost"
             size="sm"
             className="gap-2 text-muted-foreground"
           >
-            <LogOut className="h-4 w-4" />
-            Sign out
+            <Settings className="h-4 w-4" />
+            Topics
           </Button>
         </div>
       </div>
 
-      {/* Refresh status / error */}
+      {/* Status / error */}
       {status && (
         <div className="text-xs text-muted-foreground rounded-lg border border-border px-4 py-2.5">
           Fetched {status.fetched} articles · {status.new} new · {status.analyzed} analyzed by AI
@@ -150,7 +228,7 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
       )}
       {error && (
         <p className="text-sm text-destructive" role="alert">
-          Refresh failed: {error}
+          {error}
         </p>
       )}
 
@@ -163,9 +241,8 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center">
-        {/* Category tabs */}
         <div className="flex rounded-lg border border-border overflow-hidden text-sm">
-          {CATEGORY_OPTIONS.map(({ value, label }) => (
+          {categoryOptions.map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setCategory(value)}
@@ -180,7 +257,6 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
           ))}
         </div>
 
-        {/* Min score */}
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground whitespace-nowrap">Min score</span>
           <input
@@ -194,7 +270,6 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
           <span className="w-4 text-center font-mono">{minScore}</span>
         </div>
 
-        {/* Search */}
         <Input
           placeholder="Search…"
           value={search}
@@ -210,7 +285,7 @@ export function DashboardClient({ initialItems }: { initialItems: NewsItem[] }) 
       {/* News grid */}
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground text-sm">
-          {allItems.length === 0
+          {filteredByTopic.length === 0
             ? 'No articles yet. Click "Refresh Feeds" to fetch news.'
             : "No articles match your filters."}
         </div>
