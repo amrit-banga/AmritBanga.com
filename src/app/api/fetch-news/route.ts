@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Parser from "rss-parser";
 import Anthropic from "@anthropic-ai/sdk";
-import { getDb } from "@/lib/db";
+import { initDb } from "@/lib/db";
 
 const parser = new Parser({
   headers: { "User-Agent": "Mozilla/5.0 (compatible; NewsDashboard/1.0)" },
@@ -34,7 +34,6 @@ const FEEDS: Record<string, string[]> = {
   ],
 };
 
-// Max new items to run through Claude per refresh, per category
 const MAX_NEW_PER_CATEGORY = 15;
 const BATCH_SIZE = 3;
 
@@ -76,13 +75,12 @@ Tags: 2-4 topics from: politics, economy, technology, sports, science, health, c
 }
 
 export async function POST() {
-  const db = getDb();
+  const db = await initDb();
   const errors: string[] = [];
   let totalFetched = 0;
   let totalNew = 0;
   let totalAnalyzed = 0;
 
-  // Fetch all RSS feeds concurrently
   const candidates: { item: Parser.Item; category: string; source: string }[] = [];
 
   await Promise.allSettled(
@@ -104,14 +102,11 @@ export async function POST() {
     )
   );
 
-  // Find items not already in DB
+  const existingResult = await db.execute("SELECT url FROM news_items");
   const existingUrls = new Set<string>(
-    (db.prepare("SELECT url FROM news_items").all() as { url: string }[]).map(
-      (r) => r.url ?? ""
-    )
+    existingResult.rows.map((r) => (r.url as string) ?? "")
   );
 
-  // Cap per category so no single category starves the others
   const seenPerCategory: Record<string, number> = {};
   const newItems = candidates.filter(({ item, category }) => {
     if (!item.link || existingUrls.has(item.link)) return false;
@@ -121,13 +116,6 @@ export async function POST() {
 
   totalNew = newItems.length;
 
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO news_items
-      (title, url, description, pub_date, source, category, summary, quality_score, tags)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-
-  // Process in batches of BATCH_SIZE concurrent Claude calls
   for (let i = 0; i < newItems.length; i += BATCH_SIZE) {
     const batch = newItems.slice(i, i + BATCH_SIZE);
     await Promise.all(
@@ -151,17 +139,22 @@ export async function POST() {
           }
         }
 
-        insert.run(
-          item.title,
-          item.link,
-          item.contentSnippet ?? item.summary ?? null,
-          item.pubDate ?? item.isoDate ?? null,
-          source,
-          category,
-          summary,
-          quality_score,
-          tags
-        );
+        await db.execute({
+          sql: `INSERT OR IGNORE INTO news_items
+            (title, url, description, pub_date, source, category, summary, quality_score, tags)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [
+            item.title!,
+            item.link!,
+            item.contentSnippet ?? item.summary ?? null,
+            item.pubDate ?? item.isoDate ?? null,
+            source,
+            category,
+            summary,
+            quality_score,
+            tags,
+          ],
+        });
       })
     );
   }
