@@ -10,6 +10,12 @@ export const metadata: Metadata = {
 
 const projects = [
   {
+    slug: "alien-abduction-ios-game",
+    title: "Alien Abduction iOS Mobile Game",
+    summary: "An endless side-scrolling SpriteKit game where you pilot an alien saucer, abducting creatures across ocean, grassland, and city environments while dodging obstacles.",
+    tech: ["Swift", "SpriteKit", "GameKit", "AVFoundation", "iCloud"],
+  },
+  {
     slug: "personal-ai-dashboard",
     title: "Personal AI Dashboard",
     summary: "A self-hosted dashboard for interacting with and monitoring multiple AI models in one place.",
