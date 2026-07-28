@@ -72,8 +72,7 @@ export default function AlienAbductionPage() {
 
         <p>
           Game is currently undergoing beta testing and will be seeking App
-          Store publication soon. Monetization will also be added via Google
-          AdMob.
+          Store publication soon. 
         </p>
       </section>
 
