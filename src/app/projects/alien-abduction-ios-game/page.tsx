@@ -7,7 +7,8 @@ import ScreenshotGallery from "./screenshot-gallery";
 
 export const metadata: Metadata = {
   title: "Alien Abduction iOS Mobile Game",
-  description: "An endless side-scrolling SpriteKit game where you pilot an alien saucer, abducting creatures while avoiding obstacles.",
+  description:
+    "An endless side-scrolling SpriteKit game where you pilot an alien saucer, abducting creatures while avoiding obstacles.",
 };
 
 const screenshots = [
@@ -32,10 +33,22 @@ export default function AlienAbductionPage() {
       </Link>
 
       <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Alien Abduction iOS Mobile Game</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
+          Alien Abduction iOS Mobile Game
+        </h1>
+
         <div className="flex flex-wrap gap-2">
-          {["Swift", "SpriteKit", "GameKit", "AVFoundation", "iCloud", "Claude Code"].map((t) => (
-            <Badge key={t} variant="tech">{t}</Badge>
+          {[
+            "Swift",
+            "SpriteKit",
+            "GameKit",
+            "AVFoundation",
+            "iCloud",
+            "Claude Code",
+          ].map((t) => (
+            <Badge key={t} variant="tech">
+              {t}
+            </Badge>
           ))}
         </div>
       </header>
@@ -44,18 +57,23 @@ export default function AlienAbductionPage() {
 
       <section className="space-y-4 text-muted-foreground leading-relaxed mb-10">
         <p>
-          An endless side-scrolling iOS game built with SpriteKit where you pilot an alien saucer,
-          abducting creatures while avoiding obstacles across three dynamically changing environments.
+          An endless side-scrolling iOS game built with SpriteKit where you
+          pilot an alien saucer, abducting creatures while avoiding obstacles
+          across three dynamically changing environments.
         </p>
+
         <p>
-          Control a UFO flying across ocean, grassland, and city environments. Use your tractor beam
-          to abduct creatures for points while dodging planes, terrain, and obstacles. The longer you
-          survive, the faster and harder it gets. Plane spawn rate ramps from one every 2.5 seconds
-          to three per second over four minutes.
+          Control a UFO flying across ocean, grassland, and city environments.
+          Use your tractor beam to abduct creatures for points while dodging
+          planes, terrain, and obstacles. The longer you survive, the faster and
+          harder it gets. Plane spawn rate ramps from one every 2.5 seconds to
+          three per second over four minutes.
         </p>
+
         <p>
-          Game is currently under-going beta testing and will be seeking App Store publishment soon.
-          Monetization will also be added via Google AdMob.
+          Game is currently undergoing beta testing and will be seeking App
+          Store publication soon. Monetization will also be added via Google
+          AdMob.
         </p>
       </section>
 
@@ -66,8 +84,11 @@ export default function AlienAbductionPage() {
         <ScreenshotGallery screenshots={screenshots} />
       </section>
 
-      <section>
+      <Separator className="mb-10" />
+
+      <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">Gameplay Video</h2>
+
         <div className="rounded-xl overflow-hidden border border-border bg-black max-w-xs">
           <video
             controls
@@ -75,9 +96,97 @@ export default function AlienAbductionPage() {
             className="w-full"
             poster="/projects/alien-abduction/IMG_0307.PNG"
           >
-            <source src="/projects/alien-abduction/gameplay.mp4" type="video/mp4" />
+            <source
+              src="/projects/alien-abduction/gameplay.mp4"
+              type="video/mp4"
+            />
             Your browser does not support the video tag.
           </video>
+        </div>
+      </section>
+
+      <Separator className="mb-10" />
+
+      <section className="space-y-6">
+        <h2 className="text-xl font-semibold">Privacy Policy</h2>
+
+        <div className="space-y-6 text-muted-foreground leading-relaxed">
+          <p>
+            <strong className="text-foreground">Last updated:</strong> July 8,
+            2026
+          </p>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">
+              Information We Collect
+            </h3>
+            <p>
+              Alien Abduction does not directly collect, store, or share
+              personal information from users.
+            </p>
+            <p className="mt-2">
+              The game uses Apple's Game Center services to provide features
+              such as leaderboards and achievements. Game Center may collect and
+              process information according to Apple's own privacy practices.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">
+              Third-Party Services
+            </h3>
+            <p>
+              This app uses Apple's Game Center service. Information collected
+              through Game Center is handled by Apple according to Apple's
+              Privacy Policy.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">
+              Data Security
+            </h3>
+            <p>
+              Since this app does not collect or store personal user
+              information, there is no personal data maintained by the
+              developer.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">
+              Children's Privacy
+            </h3>
+            <p>
+              This app does not knowingly collect personal information from
+              children.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">
+              Changes to This Privacy Policy
+            </h3>
+            <p>
+              This privacy policy may be updated from time to time. Any changes
+              will be posted on this page.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-2">Contact</h3>
+            <p>For questions about this Privacy Policy, contact:</p>
+
+            <div className="mt-2">
+              <p className="text-foreground font-medium">Amrit Banga</p>
+              <a
+                href="mailto:amrit.banga@outlook.com"
+                className="text-primary hover:underline"
+              >
+                amrit.banga@outlook.com
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </div>
