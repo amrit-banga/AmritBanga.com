@@ -71,8 +71,7 @@ export default function AlienAbductionPage() {
         </p>
 
         <p>
-          Game is currently undergoing beta testing and will be seeking App
-          Store publication soon. 
+          The game is now live on the Apple App Store!
         </p>
       </section>
 
