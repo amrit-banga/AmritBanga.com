@@ -106,87 +106,231 @@ export default function AlienAbductionPage() {
       <Separator className="mb-10" />
 
       <section className="space-y-6">
-        <h2 className="text-xl font-semibold">Privacy Policy</h2>
+  <h2 className="text-xl font-semibold">Privacy Policy</h2>
 
-        <div className="space-y-6 text-muted-foreground leading-relaxed">
-          <p>
-            <strong className="text-foreground">Last updated:</strong> July 8,
-            2026
-          </p>
+  <div className="space-y-6 text-muted-foreground leading-relaxed">
+    <p>
+      <strong className="text-foreground">Last updated:</strong> August 31,
+      2026
+    </p>
 
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">
-              Information We Collect
-            </h3>
-            <p>
-              Alien Abduction does not directly collect, store, or share
-              personal information from users.
-            </p>
-            <p className="mt-2">
-              The game uses Apple's Game Center services to provide features
-              such as leaderboards and achievements. Game Center may collect and
-              process information according to Apple's own privacy practices.
-            </p>
-          </div>
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">Overview</h3>
 
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">
-              Third-Party Services
-            </h3>
-            <p>
-              This app uses Apple's Game Center service. Information collected
-              through Game Center is handled by Apple according to Apple's
-              Privacy Policy.
-            </p>
-          </div>
+      <p>
+        Alien Abduction does not require users to create an account with the
+        developer. The developer does not operate an advertising, analytics, or
+        gameplay-data server.
+      </p>
 
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">
-              Data Security
-            </h3>
-            <p>
-              Since this app does not collect or store personal user
-              information, there is no personal data maintained by the
-              developer.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">
-              Children's Privacy
-            </h3>
-            <p>
-              This app does not knowingly collect personal information from
-              children.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">
-              Changes to This Privacy Policy
-            </h3>
-            <p>
-              This privacy policy may be updated from time to time. Any changes
-              will be posted on this page.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-foreground mb-2">Contact</h3>
-            <p>For questions about this Privacy Policy, contact:</p>
-
-            <div className="mt-2">
-              <p className="text-foreground font-medium">Amrit Banga</p>
-              <a
-                href="mailto:amrit.banga@outlook.com"
-                className="text-primary hover:underline"
-              >
-                amrit.banga@outlook.com
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <p className="mt-2">
+        The game stores limited gameplay information and preferences to provide
+        features such as saved statistics, leaderboards, achievements, and
+        restoration after reinstalling the game.
+      </p>
     </div>
-  );
-}
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">
+        Information Stored by the Game
+      </h3>
+
+      <p>
+        Alien Abduction stores the following information locally on the
+        user’s device:
+      </p>
+
+      <ul className="mt-3 list-disc space-y-1 pl-6">
+        <li>Best score</li>
+        <li>Creature catch totals</li>
+        <li>Music and sound preferences</li>
+        <li>Whether the introductory controls screen has been shown</li>
+      </ul>
+
+      <p className="mt-3">
+        This information is used only to provide game functionality.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">iCloud</h3>
+
+      <p>
+        Alien Abduction uses Apple’s iCloud Key-Value Storage service to
+        synchronize gameplay statistics and preferences between devices and
+        restore them after the game is reinstalled.
+      </p>
+
+      <p className="mt-2">
+        This information may be associated with the user’s Apple Account by
+        Apple for synchronization purposes. The developer does not receive the
+        user’s Apple Account credentials and does not have a separate server
+        containing this information.
+      </p>
+
+      <p className="mt-2">
+        Users must be signed into iCloud for synchronization and restoration to
+        work. Gameplay information stored in iCloud may remain available after
+        the app is deleted so it can be restored if the game is reinstalled.
+      </p>
+
+      <p className="mt-2">
+        Information stored through iCloud is handled by Apple according to{" "}
+        <a
+          href="https://www.apple.com/legal/privacy/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary hover:underline"
+        >
+          Apple’s Privacy Policy
+        </a>
+        .
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">Game Center</h3>
+
+      <p>
+        Alien Abduction uses Apple’s Game Center service to provide
+        leaderboards and achievements. The game may submit information
+        including:
+      </p>
+
+      <ul className="mt-3 list-disc space-y-1 pl-6">
+        <li>Best scores</li>
+        <li>Achievement progress</li>
+        <li>Related gameplay activity required for these features</li>
+      </ul>
+
+      <p className="mt-3">
+        Depending on the user’s Game Center settings, information such as their
+        Game Center nickname, avatar, scores, and achievements may be visible to
+        other Game Center users.
+      </p>
+
+      <p className="mt-2">
+        Game Center information is collected and processed by Apple according
+        to{" "}
+        <a
+          href="https://www.apple.com/legal/privacy/data/en/game-center/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary hover:underline"
+        >
+          Game Center &amp; Privacy
+        </a>{" "}
+        and{" "}
+        <a
+          href="https://www.apple.com/legal/privacy/"
+          target="_blank"
+          rel="noreferrer"
+          className="text-primary hover:underline"
+        >
+          Apple’s Privacy Policy
+        </a>
+        .
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">
+        Advertising and Tracking
+      </h3>
+
+      <p>
+        Alien Abduction does not use gameplay information for advertising or
+        tracking. The developer does not sell or share gameplay information
+        with advertisers or data brokers.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">Data Management</h3>
+
+      <p>
+        Users can manage their iCloud and Game Center accounts using the
+        settings and controls provided by Apple.
+      </p>
+
+      <p className="mt-2">
+        Deleting Alien Abduction removes information stored locally by the app.
+        Information previously synchronized through iCloud or submitted to
+        Game Center may remain associated with the user’s Apple Account
+        according to Apple’s retention and privacy practices.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">
+        Contacting the Developer
+      </h3>
+
+      <p>
+        If a user contacts the developer by email, the developer may receive
+        the user’s email address and any information included in the message.
+        This information will be used only to respond to the request and will
+        not be used for advertising or tracking.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">Data Security</h3>
+
+      <p>
+        The developer does not maintain a separate database containing users’
+        gameplay statistics. Information synchronized through iCloud or
+        submitted to Game Center is protected and processed using Apple’s
+        systems and security practices.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">
+        Children’s Privacy
+      </h3>
+
+      <p>
+        Alien Abduction does not knowingly request or directly collect personal
+        information from children. The game does not include
+        developer-operated account registration, messaging, advertising, or
+        tracking features.
+      </p>
+
+      <p className="mt-2">
+        Apple services, including iCloud and Game Center, are governed by
+        Apple’s privacy practices and the settings associated with the user’s
+        Apple Account.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">
+        Changes to This Privacy Policy
+      </h3>
+
+      <p>
+        This Privacy Policy may be updated when the game’s features or data
+        practices change. Any updates will be posted on this page with a revised
+        “Last updated” date.
+      </p>
+    </div>
+
+    <div>
+      <h3 className="font-semibold text-foreground mb-2">Contact</h3>
+
+      <p>For questions about this Privacy Policy, contact:</p>
+
+      <div className="mt-2">
+        <p className="font-medium text-foreground">Amrit Banga</p>
+
+        <a
+          href="mailto:amrit.banga@outlook.com"
+          className="text-primary hover:underline"
+        >
+          amrit.banga@outlook.com
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
